@@ -1,0 +1,154 @@
+Problem Solving - BookMyShow
+
+Bookmyshow is a ticketing platform where you can book tickets for a movie show. For a given Theatre we can see the next 7 dates. As one chooses the date, we get a list of all shows running in that Theatre along with the show timings.
+Users can Book Tickets.
+
+
+Entities:- 
+    User 
+        ID (Primary)
+        Name 
+        Phone 
+        Email
+        Metadata
+
+    Theatre 
+        ID (Primary)
+        Name
+        Location
+
+    Screen
+        ID (Primary)
+        Theatre_Id (Foreign Key)
+        Capacity 
+        Name
+
+    Show 
+        ID (Primary)
+        Movie_Id (Foreign Key referencing Movie Table)
+        Theatre_Id (Foreign Key referencing Theatre Table)
+        Price
+        Time 
+    Movie
+        ID (Primary)
+        Title
+        Description
+        Duration
+        Genre
+        Metadata
+
+    Ticket
+        ID (Ticket_id)
+        User_id (Foreign Key)
+        Show_id (Foreign)
+        Persons
+        Price
+
+
+Relationships:- 
+    Theatre <> Screen (1:N)
+    Screen <> Show(1:N)
+    Movie <> Show(1:M) 
+    Movie <> Tickets (1:M)
+    User <> Tickets (1:M) 
+
+
+SQL Queries:- 
+
+Table Creation 
+
+    CREATE TABLE User (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Name VARCHAR(255),
+        Phone VARCHAR(15),
+        Email VARCHAR(255),
+        Metadata TEXT
+    );
+
+    CREATE TABLE Theatre (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Name VARCHAR(255),
+        Location VARCHAR(255)
+    );
+
+    CREATE TABLE Screen (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Theatre_Id INT,
+        Capacity INT,
+        Name VARCHAR(255),
+        FOREIGN KEY (Theatre_Id) REFERENCES Theatre(ID)
+    );
+    CREATE TABLE Show (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Movie_Id INT,
+        Theatre_Id INT,
+        Price DECIMAL(8,2),
+        Time DATETIME,
+        FOREIGN KEY (Movie_Id) REFERENCES Movie(ID),
+        FOREIGN KEY (Theatre_id) REFERENCES Theatre(ID)
+    );
+
+    CREATE TABLE Movie (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        Title VARCHAR(255),
+        Description TEXT,
+        Duration IN
+    T,
+        Genre VARCHAR(100),
+        Metadata TEXT
+    );
+
+    CREATE TABLE Ticket (
+        ID INT PRIMARY KEY AUTO_INCREMENT,
+        User_id INT,
+        Show_id INT,
+        Persons INT,
+        Price DECIMAL(8, 2),
+        FOREIGN KEY (User_id) REFERENCES User(ID),
+        FOREIGN KEY (Show_id) REFERENCES Show(ID)
+    );
+
+
+-- Sample User Entries
+    INSERT INTO User (Name, Phone, Email, Metadata) VALUES
+        ('nikhil Siwach’, '1234567890', nikhil@gmail.com', 'Regular user'),
+        ('Hrishikesh', '9876543210', hrishikesh@gmail.com', 'Premium user');
+
+-- Sample Theatre Entries
+    INSERT INTO Theatre (Name, Location) VALUES
+        ('Theatre 1', 'Location 1'),
+        ('Theatre 2', 'Location 2');
+
+-- Sample Screen Entries
+    INSERT INTO Screen (Theatre_Id, Capacity, Name) VALUES
+        (1, 100, 'Screen A'),
+        (1, 80, 'Screen B'),
+        (2, 120, 'Screen C');
+
+-- Sample Movie Entries
+    INSERT INTO Movie (Title, Description, Duration, Genre, Metadata) VALUES
+        ('Bahubali', 'Description for Bahubali', 120, 'Action', 'Movie metadata'),
+        ('Movie 2', 'Description for Movie 2', 105, 'Comedy', 'Another movie metadata');
+
+-- Sample Show Entries
+    INSERT INTO Show (Movie_Id, Theatre_Id, Price, Time) VALUES
+        (1, 1, 10.99, '2024-01-10 18:00:00'),
+        (2, 1, 8.50, '2024-01-10 20:30:00'),
+        (1, 2, 12.00, '2024-01-10 19:15:00');
+
+-- Sample Ticket Entries
+    INSERT INTO Ticket (User_id, Show_id, Persons, Price) VALUES
+        (1, 1, 2, 21.98),
+        (2, 3, 3, 36.00);
+
+
+
+Query to list down all the shows on a given date at a given theatre along with their respective show timings. 
+
+
+SELECT Show.ID, Movie.Title AS Movie_Title, Show.Time AS Show_Time
+FROM Show
+JOIN Movie ON Show.Movie_Id = Movie.ID
+WHERE Show.Theatre_Id = <Theatre_ID>
+AND DATE(Show.Time) = '10-01-2023';
+
